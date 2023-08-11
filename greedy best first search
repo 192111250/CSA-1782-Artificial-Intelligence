@@ -1,0 +1,61 @@
+import heapq
+
+class Graph:
+    def _init_(self):
+        self.nodes = set()
+        self.edges = {}
+
+    def add_node(self, value):
+        self.nodes.add(value)
+        self.edges[value] = []
+
+    def add_edge(self, from_node, to_node, weight):
+        self.edges[from_node].append((to_node, weight))
+
+def greedy_best_first_search(graph, start, goal, heuristic):
+    open_set = []
+    heapq.heappush(open_set, (heuristic[start], start))  # Priority queue with (heuristic, node) pairs
+    came_from = {}
+
+    while open_set:
+        _, current_node = heapq.heappop(open_set)
+
+        if current_node == goal:
+            return reconstruct_path(came_from, current_node)
+
+        for neighbor, _ in graph.edges[current_node]:
+            if neighbor not in came_from:
+                came_from[neighbor] = current_node
+                heapq.heappush(open_set, (heuristic[neighbor], neighbor))
+
+    return None  # No path found
+
+def reconstruct_path(came_from, current):
+    path = [current]
+    while current in came_from:
+        current = came_from[current]
+        path.append(current)
+    return path[::-1]
+
+# Creating a graph
+g = Graph()
+g.add_node('A')
+g.add_node('B')
+g.add_node('C')
+g.add_node('D')
+g.add_edge('A', 'B', 1)
+g.add_edge('A', 'C', 3)
+g.add_edge('B', 'D', 2)
+g.add_edge('C', 'D', 1)
+
+# Define the heuristic function (distance to goal)
+heuristic = {'A': 4, 'B': 3, 'C': 2, 'D': 0}
+
+start = 'A'
+goal = 'D'
+path = greedy_best_first_search(g, start, goal, heuristic)
+
+if path:
+    print("Greedy Best-First Search Path:", path)
+else:
+    print("No path found.")
