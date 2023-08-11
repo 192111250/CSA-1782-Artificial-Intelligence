@@ -1,0 +1,28 @@
+import itertools
+
+def calculate_distance(points, order):
+    total_distance = 0
+    for i in range(len(order) - 1):
+        total_distance += distance(points[order[i]], points[order[i + 1]])
+    total_distance += distance(points[order[-1]], points[order[0]])
+    return total_distance
+
+def distance(p1, p2):
+  return ((p1[0] - p2[0])*2 + (p1[1] - p2[1])2)*0.5
+
+def brute_force_tsp(points):
+    min_distance = float('inf')
+    min_order = None
+    for order in itertools.permutations(range(len(points))):
+        current_distance = calculate_distance(points, order)
+        if current_distance < min_distance:
+            min_distance = current_distance
+            min_order = order
+    return min_order, min_distance
+
+# List of points (x, y) representing cities
+points = [(0, 0), (1, 3), (2, 6), (5, 0), (6, 3)]
+
+min_order, min_distance = brute_force_tsp(points)
+print("Optimal Order:", min_order)
+print("Shortest Distance:", min_distance)
