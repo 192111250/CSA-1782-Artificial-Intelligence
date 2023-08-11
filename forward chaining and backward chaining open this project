@@ -1,0 +1,53 @@
+class RuleBasedSystem:
+    def _init_(self):
+        self.facts = set()
+        self.rules = []
+
+    def add_fact(self, fact):
+        self.facts.add(fact)
+
+    def add_rule(self, premise, conclusion):
+        self.rules.append((premise, conclusion))
+
+    def forward_chaining(self):
+        new_facts = set(self.facts)
+        while True:
+            added_new_fact = False
+            for premise, conclusion in self.rules:
+                if all(f in new_facts for f in premise) and conclusion not in new_facts:
+                    new_facts.add(conclusion)
+                    added_new_fact = True
+            if not added_new_fact:
+                break
+        return new_facts
+
+    def backward_chaining(self, goal):
+        if goal in self.facts:
+            return True
+        for premise, conclusion in self.rules:
+            if conclusion == goal:
+                if all(self.backward_chaining(p) for p in premise):
+                    return True
+        return False
+
+# Creating a rule-based system
+rbs = RuleBasedSystem()
+
+# Adding facts
+rbs.add_fact('Rainy')
+rbs.add_fact('Cold')
+
+# Adding rules
+rbs.add_rule(['Rainy'], 'Wet')
+rbs.add_rule(['Cold'], 'Freezing')
+rbs.add_rule(['Wet', 'Freezing'], 'Icy')
+
+# Forward chaining
+print("Forward Chaining:")
+print("Inferred Facts:", rbs.forward_chaining())
+
+# Backward chaining
+print("\nBackward Chaining:")
+print("Can infer Icy:", rbs.backward_chaining('Icy'))
+print("Can infer Wet:", rbs.backward_chaining('Wet'))
+print("Can infer Freezing:", rbs.backward_chaining('Freezing'))
