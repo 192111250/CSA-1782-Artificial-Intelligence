@@ -1,0 +1,23 @@
+class MapColoring:
+    def _init_(self, graph, colors):
+        self.graph = graph
+        self.colors = colors
+        self.coloring = {}
+
+    def is_valid(self, node, color):
+        for neighbor in self.graph[node]:
+            if neighbor in self.coloring and self.coloring[neighbor] == color:
+                return False
+        return True
+
+    def solve(self, node_index=0):
+        if node_index == len(self.graph):
+            return True
+
+        node = list(self.graph.keys())[node_index]
+        for color in self.colors:
+            if self.is_valid(node, color):
+                self.coloring[node] = color
+                if self.solve(node_index + 1):
+                    return True
+                self.coloring.pop(node)
